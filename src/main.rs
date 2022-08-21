@@ -47,7 +47,6 @@ fn get_num() -> u32 {
                 continue;
             },
         };
-        break;
+        break num;
     }
-    num
 }
