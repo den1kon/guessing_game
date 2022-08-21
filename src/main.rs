@@ -3,79 +3,51 @@ use std::cmp::Ordering;
 use rand::Rng;
 
 fn main() {
-    println!("You are playing 'Guess the number!'");
-    
-    println!("The secret number lies in range between x and y");
+    println!("You are playing 'Guess the number!'\nThe secret number lies in range between min and max\nEnter min:");
+    let min: u32 = get_num();
+    println!("Enter max:");
+    let max:u32 = get_num();
 
-    println!("Enter x:");
-    
-    let mut min = String::new();
+    let secret_num: u32 = rand::thread_rng().gen_range(min..=max);
+    println!("Generated a secret a number in range between {min} and {max}");
 
-    loop {
-        io::stdin().read_line(&mut min).expect("Failed to read line");
-        let  min: u32 = match min.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("Enter a valid number!");
-                continue;
-            },
-        };
-        break;
-    };
-
-
-    println!("Enter y:");
-
-    let mut max = String::new();
-
-    loop {
-        io::stdin().read_line(&mut max).expect("Failed to read line");
-        let max: u32 = match max.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("Enter a valid number!");
-                continue;
-            },
-        };
-        break;
-    };
-
-    let x: u32 = min.trim().parse().expect("");
-    let y: u32 = max.trim().parse().expect("");
-
-    let secret_number = rand::thread_rng().gen_range(x..=y);
-
-    //println!("The secret number is {secret_number}");
-    
-    println!("Enter number of attempts:");
-    let mut attempts = String::new();
-    io::stdin().read_line(&mut attempts).expect("Failed to read line");
-    let attempts: u32 = attempts.trim().parse().expect("");
+    println!("Enter number of attempts to guess the secret number:");
+    let attempts: u32 = get_num();
+    let mut guess: u32;
 
     for i in 1..=attempts {
-        println!("Please input your guess. Attempt: {i}");
-
-        let mut guess = String::new();
-
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("You guessed: {}", guess);
-
-        match guess.cmp(&secret_number) {
+        println!("Attempt: {i}\nEnter your guess:");
+        guess = get_num();
+        
+        match guess.cmp(&secret_num) {
             Ordering::Less => println!("Too small"),
             Ordering::Greater => println!("Too big"),
             Ordering::Equal => {
-                println!("You win");
+                println!("You win!");
                 return;
             }
         }
-    };
-    println!("You've ran out of attempts. You lose!");
+    }
+    
+    println!("You lose. The secret number was {secret_num}");
+}
+
+fn get_num() -> u32 {
+    let mut temp = String::new();
+    let num: u32;
+    loop {
+        io::stdin()
+            .read_line(&mut temp)
+            .expect("Failed to read line");
+
+        num = match temp.trim().parse() {
+            Ok(n) => n,
+            Err(_) => {
+                println!("Input a number");
+                continue;
+            },
+        };
+        break;
+    }
+    return num;
 }
